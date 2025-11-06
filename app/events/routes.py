@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+import pytz
 
 from app.database import get_db
 from app.models import Event, User
@@ -16,12 +17,32 @@ def create_event(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    new_event = Event(**event.dict(), organizer_id=current_user.id)
+    import pytz
+    ist = pytz.timezone("Asia/Kolkata")
+
+    # ✅ Handle both naive and aware datetimes safely
+    if event.date.tzinfo is None:
+        # Assume given datetime is in IST
+        ist_date = ist.localize(event.date)
+    else:
+        # Convert to IST if user sends other timezone
+        ist_date = event.date.astimezone(ist)
+
+    # ✅ Convert IST → UTC for storage
+    utc_date = ist_date.astimezone(pytz.utc)
+
+    # ✅ Create event with UTC datetime
+    new_event = Event(
+        **event.dict(exclude={"date"}),
+        date=utc_date,
+        organizer_id=current_user.id
+    )
+
     db.add(new_event)
     db.commit()
     db.refresh(new_event)
-    return new_event
 
+    return new_event
 
 # --- GET ALL EVENTS (any logged-in user) --- #
 @router.get("/", response_model=list[EventResponse])

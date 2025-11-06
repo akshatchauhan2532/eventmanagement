@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
 from sqlalchemy.orm import relationship
 from app.database import Base
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # --- USER MODEL ---
@@ -12,7 +12,7 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    role = Column(String, default="customer")  # "organizer" or "customer"
+    
 
     events = relationship("Event", back_populates="organizer")
     bookings = relationship("Booking", back_populates="customer")
@@ -25,7 +25,7 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     description = Column(String)
-    date = Column(DateTime, default=datetime.utcnow)
+    date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     venue = Column(String)
     organizer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
@@ -58,7 +58,7 @@ class Booking(Base):
     ticket_id = Column(Integer, ForeignKey("tickets.id"))
     quantity = Column(Integer)
     total_price = Column(Float)
-    booking_date = Column(DateTime, default=datetime.utcnow)
+    booking_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     customer = relationship("User", back_populates="bookings")
     event = relationship("Event", back_populates="bookings")
