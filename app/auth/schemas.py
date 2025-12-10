@@ -8,7 +8,7 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
-    role: Optional[str] = "customer"  # can be "organizer" or "customer"
+
 
 
 # --- USER LOGIN --- #
@@ -22,7 +22,7 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
-    role: str
+    
 
     class Config:
         from_attributes = True  # replaces orm_mode in Pydantic v2

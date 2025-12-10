@@ -60,7 +60,7 @@ def book_ticket(
     # ✅ Send confirmation email asynchronously
     send_booking_email.delay(
         current_user.email,
-        event.title,        # ✅ use event.title instead of ticket.name
+        event.title,       
         booking.quantity,
         total_price
     )

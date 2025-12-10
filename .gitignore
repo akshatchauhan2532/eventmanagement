@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*~
+.pytest_cache/
+.ipynb_checkpoints/
+venv/
+env/
+.venv/
+.env
+.env.*
+.vscode/
+vectorstore/
+chroma_db/
+.chroma/
+.DS_Store
+Thumbs.db

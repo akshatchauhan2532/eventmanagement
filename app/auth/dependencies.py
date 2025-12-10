@@ -37,6 +37,10 @@ def get_current_user(
     return user
 
 
+
+
+
+
 # --- Role-based dependencies --- #
 def get_current_organizer(current_user: User = Depends(get_current_user)):
     """Allow only users with role='organizer'."""
